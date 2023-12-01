@@ -1,0 +1,59 @@
+void BME280_init()
+{          
+uint8_t temp[16];
+temp[0]=0x01;
+ina260.I2C_Write(I2C3, 0xF2,temp, 1,236); 
+temp[0]=((0x05 << 5) | (0x05 << 2) | 0x03);
+ina260.I2C_Write(I2C3, 0xF4,temp , 1,236);    
+temp[0]=((0x03 << 5) | (0x04 << 2));     
+ina260.I2C_Write(I2C3, 0xF5,temp , 1,236);                            			                      //
+}
+
+
+volatile uint32_t reg_temp,var1,var2,t_fine,t;
+ina260.I2C_Read(I2C3,0xFA,1,0xEC);
+oled.PrintStr("0xFA:");
+sprintf(str, "%02X",ina260.rxdata[0]);
+oled.PrintStr(str);
+reg_temp=ina260.rxdata[0]*256;
+oled.ClearLCDScreen();
+ina260.I2C_Read(I2C3,0xFB,1,0xEC);
+oled.PrintStr("0xFB:");
+sprintf(str, "%02X",ina260.rxdata[0]);
+oled.PrintStr(str);
+reg_temp=(reg_temp|ina260.rxdata[0])*256;
+oled.ClearLCDScreen();
+ina260.I2C_Read(I2C3,0xFC,1,0xEC);
+oled.PrintStr("0xFC:");
+sprintf(str, "%02X",ina260.rxdata[0]);
+oled.PrintStr(str);
+reg_temp=(reg_temp|ina260.rxdata[0]);
+oled.ClearLCDScreen();
+reg_temp=reg_temp>>4;
+
+ina260.I2C_Read(I2C3,0x88,1,0xEC);
+oled.PrintStr("0x88:");
+sprintf(str, "%02X",ina260.rxdata[0]);
+oled.PrintStr(str);
+oled.ClearLCDScreen();
+var1=(reg_temp/8)-2*ina260.rxdata[0];
+var2 = (reg_temp/ 16) - ina260.rxdata[0];
+
+
+ina260.I2C_Read(I2C3,0x8A,1,0xEC);
+oled.PrintStr("0x8A:");
+sprintf(str, "%02X",ina260.rxdata[0]);
+oled.PrintStr(str);
+oled.ClearLCDScreen();
+ var1 = (var1 * (ina260.rxdata[0]) / 2048);
+
+ina260.I2C_Read(I2C3,0x8C,1,0xEC);
+oled.PrintStr("0x8C:");
+sprintf(str, "%02X",ina260.rxdata[0]);
+oled.PrintStr(str);
+oled.ClearLCDScreen();
+
+ var2 = (((var2 * var2) / 4096) * (ina260.rxdata[0])) / 16384;
+  t_fine = var1 + var2;
+  t= (t_fine * 5 + 128) / 256;
+  t=0;*/
